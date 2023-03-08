@@ -1,4 +1,100 @@
+basePath: /api/v1
+definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  models.Login:
+    properties:
+      pin:
+        type: string
+      username:
+        type: string
+    type: object
+  models.User:
+    properties:
+      created:
+        type: string
+      deleted:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      pin:
+        type: string
+      updated:
+        type: string
+      username:
+        type: string
+    required:
+    - pin
+    - username
+    type: object
 info:
   contact: {}
-paths: {}
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Username e Pin
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/models.Login'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Login'
+        "400":
+          description: Bad Request
+      summary: set login
+      tags:
+      - login
+  /user:
+    get:
+      consumes:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+      security:
+      - BearerAuth: []
+      summary: get user
+      tags:
+      - user
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Dados do usuário
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+      summary: set user
+      tags:
+      - user
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

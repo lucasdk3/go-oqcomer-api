@@ -7,6 +7,13 @@ import (
 	"github.com/lucasdk3/maui-oqcomer-api/services"
 )
 
+// @Summary set login
+// @Tags    login
+// @Router  /login [post]
+// @Accept 	json
+// @Param   payload   body    models.Login    false  "Username e Pin"
+// @Success 200           {object} models.Login
+// @Failure 400
 func Login(c *gin.Context) {
 	db := database.GetDatabase()
 
@@ -35,7 +42,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := services.NewJWTService().GenerateToken(user.ID)
+	token, err := services.JWTService().GenerateToken(user.ID)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"error": err.Error(),

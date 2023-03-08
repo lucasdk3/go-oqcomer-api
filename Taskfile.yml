@@ -1,0 +1,112 @@
+version: "3"
+
+vars:
+  DOCKER_IMAGE_BUILDER: db
+  DOCKER_IMAGE_RUNTIME: runtime
+
+dotenv: [".env"]
+
+tasks:
+  default:
+    cmds:
+      - task --help
+      - task --list
+
+  push:
+    cmds:
+      - git push github develop --force
+      - git push bitbucket HEAD
+
+  build:image:
+    silent: true
+    desc: "Cria a imagem do flutter"
+    cmds:
+      - docker compose up -d
+
+  runtime:image:
+    silent: true
+    desc: "Cria a imagem do servidor flutter"
+    cmds:
+      - docker build --build-arg ENVIRONMENT={{.ENVIRONMENT}} --build-arg FLUTTER_VERSION=3.3.0 -t flutter_server -f .ci/runtime.Dockerfile .
+
+  runtime:start:
+    silent: true
+    desc: "Inicia servidor flutter"
+    cmds:
+      - docker run --privileged -i -p 8080:5000 -td flutter_server
+
+  get:version:
+    desc: "Retorna do pubspec.yaml a versão do projeto"
+    cmds:
+      - docker run --rm --log-driver none --entrypoint yq -v $(pwd):/tmp/ linuxserver/yq -r '.version' /tmp/pubspec.yaml
+
+  get:name:
+    desc: "Retorna do pubspec.yaml o nome do projeto"
+    cmds:
+      - docker run --rm --log-driver none --entrypoint yq -v $(pwd):/tmp/ linuxserver/yq -r '.name' /tmp/pubspec.yaml
+
+  install:dependencies:
+    desc: "Intala as dependências da aplicação"
+    cmds:
+      - go get
+
+  review:lint:
+    desc: "Executa as rotinas de lint da aplicação"
+    cmds:
+      - >
+        docker-compose run \
+          {{.DOCKER_IMAGE_BUILDER}} sh -c "\
+          flutter analyze --no-fatal-infos"
+
+  review:test:
+    desc: "Executa as rotinas de test da aplicação"
+    cmds:
+      - >
+        docker-compose run \
+          {{.DOCKER_IMAGE_BUILDER}} sh -c "\
+          flutter test --coverage && \
+          genhtml -o coverage coverage/lcov.info && \
+          wget -qO- https://raw.githubusercontent.com/eriwen/lcov-to-cobertura-xml/master/lcov_cobertura/lcov_cobertura.py | python3 - coverage/lcov.info -o coverage/cobertura.xml"
+
+  build:application:
+    desc: "Roda o comando de build da aplicação (Usado pela esteira)"
+    deps: [build:utils-image, install:dependencies]
+    cmds:
+      - >
+        docker-compose run \
+          {{.DOCKER_IMAGE_BUILDER}} sh -c "\
+          flutter build web -t lib/main_{{.ENVIRONEMNT}}.dart --release"
+
+  publish:artifact:
+    desc: "Roda o comando de build da aplicação (Usado pela esteira)"
+    deps: [build:utils-image]
+    cmds:
+      - >
+        docker-compose run \
+          {{.DOCKER_IMAGE_BUILDER}} sh -c "\
+          cd build && \
+          zip -r ../web.zip web && \
+          cd .. && \
+          scp -P 22222 web.zip bancocurriculos@172.104.8.237:/home/bancocurriculos"
+
+  build:local:
+    cmds:
+      - >
+        flutter clean && \
+          flutter pub get && \
+          flutter build web \
+            -t lib/main_{{.ENVIRONMENT}}.dart \
+            --dart-define=env={{.ENVIRONMENT}} \
+            --web-renderer html \
+            --release
+
+  docs:
+    cmds:
+      - >
+        swag init --pd
+
+  start:
+    deps: [docs]
+    cmds:
+      - >
+        go run main.go

@@ -12,7 +12,7 @@ type jwtService struct {
 	issure    string
 }
 
-func NewJWTService() *jwtService {
+func JWTService() *jwtService {
 	return &jwtService{
 		secretKey: "secret-key",
 		issure:    "book-api",
@@ -54,4 +54,27 @@ func (s *jwtService) ValidateToken(token string) bool {
 	})
 
 	return err == nil
+}
+
+func (s *jwtService) GetSecretKey() string {
+	secretKey := s.secretKey
+
+	return secretKey
+}
+
+func (s *jwtService) GetJWTClaim(tokenString string) (uint, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &Claim{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(s.secretKey), nil
+	})
+
+	var fakeUint uint = 0
+	if err != nil {
+		return fakeUint, err
+	}
+
+	if claims, ok := token.Claims.(*Claim); ok && token.Valid {
+		return claims.Sum, nil
+	} else {
+		return fakeUint, nil
+	}
 }

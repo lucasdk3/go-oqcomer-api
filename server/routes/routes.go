@@ -14,6 +14,7 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 		user := main.Group("user")
 		{
 			user.POST("/", controllers.CreateUser)
+			user.GET("/", controllers.GetUser)
 		}
 		// books := main.Group("books", middlewares.Auth())
 		// {
@@ -26,7 +27,7 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 
 		main.POST("login", controllers.Login)
 
-		main.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+		main.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 
 	return router
