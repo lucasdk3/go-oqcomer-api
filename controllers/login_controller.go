@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/lucasdk3/maui-oqcomer-api/database"
-	"github.com/lucasdk3/maui-oqcomer-api/models"
-	"github.com/lucasdk3/maui-oqcomer-api/services"
+	"github.com/lucasdk3/go-oqcomer-api/database"
+	"github.com/lucasdk3/go-oqcomer-api/models"
+	"github.com/lucasdk3/go-oqcomer-api/services"
 )
 
 // @Summary set login
@@ -51,7 +51,8 @@ func Login(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"token": token,
+		"access":  token.AccessToken,
+		"refresh": token.RefreshToken,
 	})
 
 }

@@ -1,13 +1,5 @@
 basePath: /api/v1
 definitions:
-  gorm.DeletedAt:
-    properties:
-      time:
-        type: string
-      valid:
-        description: Valid is true if Time is not NULL
-        type: boolean
-    type: object
   models.Login:
     properties:
       pin:
@@ -19,18 +11,16 @@ definitions:
     properties:
       created:
         type: string
-      deleted:
-        $ref: '#/definitions/gorm.DeletedAt'
+      email:
+        type: string
       id:
         type: integer
-      pin:
-        type: string
       updated:
         type: string
       username:
         type: string
     required:
-    - pin
+    - email
     - username
     type: object
 info:
@@ -56,6 +46,25 @@ paths:
       summary: set login
       tags:
       - login
+  /refresh:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: refresh
+        in: query
+        name: refresh
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Login'
+        "400":
+          description: Bad Request
+      summary: set refresh
+      tags:
+      - refresh
   /user:
     get:
       consumes:

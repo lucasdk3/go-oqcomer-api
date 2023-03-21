@@ -1,7 +1,7 @@
 package migrations
 
 import (
-	models "github.com/lucasdk3/maui-oqcomer-api/models"
+	models "github.com/lucasdk3/go-oqcomer-api/models"
 	"gorm.io/gorm"
 )
 

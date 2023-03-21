@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"log"
 	"time"
-	"github.com/lucasdk3/maui-oqcomer-api/database/migrations"
+
+	"github.com/lucasdk3/go-oqcomer-api/database/migrations"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

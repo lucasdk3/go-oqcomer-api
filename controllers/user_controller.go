@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"strings"
+
 	"github.com/gin-gonic/gin"
-	"github.com/lucasdk3/maui-oqcomer-api/database"
-	"github.com/lucasdk3/maui-oqcomer-api/models"
-	"github.com/lucasdk3/maui-oqcomer-api/services"
+	"github.com/lucasdk3/go-oqcomer-api/database"
+	"github.com/lucasdk3/go-oqcomer-api/models"
+	"github.com/lucasdk3/go-oqcomer-api/services"
 )
 
 // @Summary set user
@@ -48,11 +50,17 @@ func CreateUser(c *gin.Context) {
 // @Failure 400
 // @Security BearerAuth
 func GetUser(c *gin.Context) {
-	const Bearer_schema = "Bearer "
 	header := c.GetHeader("Authorization")
+	tokenString := strings.Split(header, "Bearer")
+	if len(tokenString) != 2 {
+		c.JSON(400, gin.H{
+			"error": header,
+		})
+		return
+	}
+	reqToken := strings.TrimSpace(tokenString[1])
 
-	tokenString := header[len(Bearer_schema):]
-	userId, err := services.JWTService().GetJWTClaim(tokenString)
+	userId, err := services.JWTService().GetJWTClaim(reqToken)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error": "User is invalid",

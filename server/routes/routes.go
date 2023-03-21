@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	controllers "github.com/lucasdk3/maui-oqcomer-api/controllers"
+	controllers "github.com/lucasdk3/go-oqcomer-api/controllers"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	// "github.com/lucasdk3/maui-oqcomer-appserver/middlewares"
@@ -26,6 +26,8 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 		// }
 
 		main.POST("login", controllers.Login)
+
+		main.POST("refresh", controllers.Refresh)
 
 		main.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}

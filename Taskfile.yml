@@ -108,5 +108,6 @@ tasks:
   start:
     deps: [docs]
     cmds:
-      - >
-        go run main.go
+      - redis-server --daemonize yes
+      - go run main.go
+      - ./ngrok http 8080

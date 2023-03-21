@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	services "github.com/lucasdk3/maui-oqcomer-api/services"
+	services "github.com/lucasdk3/go-oqcomer-api/services"
 )
 
 func Auth() gin.HandlerFunc {

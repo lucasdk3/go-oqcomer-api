@@ -47,6 +47,36 @@ const docTemplate = `{
                 }
             }
         },
+        "/refresh": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "refresh"
+                ],
+                "summary": "set refresh",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "refresh",
+                        "name": "refresh",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Login"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
         "/user": {
             "get": {
                 "security": [
@@ -107,18 +137,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "gorm.DeletedAt": {
-            "type": "object",
-            "properties": {
-                "time": {
-                    "type": "string"
-                },
-                "valid": {
-                    "description": "Valid is true if Time is not NULL",
-                    "type": "boolean"
-                }
-            }
-        },
         "models.Login": {
             "type": "object",
             "properties": {
@@ -133,21 +151,18 @@ const docTemplate = `{
         "models.User": {
             "type": "object",
             "required": [
-                "pin",
+                "email",
                 "username"
             ],
             "properties": {
                 "created": {
                     "type": "string"
                 },
-                "deleted": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
+                "email": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "integer"
-                },
-                "pin": {
-                    "type": "string"
                 },
                 "updated": {
                     "type": "string"

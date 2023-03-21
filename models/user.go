@@ -10,8 +10,8 @@ type User struct {
 	ID        uint           `json:"id" gorm:"primaryKey"`
 	Username  string         `json:"username" validate:"required"`
 	Email     string         `json:"email" validate:"required"`
-	Pin       string         `json:"pin" validate:"required"`
+	Pin       string         `json:"-" validate:"required"`
 	CreatedAt time.Time      `json:"created"`
 	UpdatedAt time.Time      `json:"updated"`
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }
