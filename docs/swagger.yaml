@@ -1,5 +1,75 @@
 basePath: /api/v1
 definitions:
+  categories.AddCategoryRequestBody:
+    properties:
+      name:
+        type: string
+    type: object
+  categories.EditCategoryRequestBody:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  foods.AddFoodRequestBody:
+    properties:
+      categoryName:
+        type: string
+      name:
+        type: string
+      subCategoryName:
+        type: string
+    type: object
+  foods.EditFoodRequestBody:
+    properties:
+      categoryName:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      subCategoryName:
+        type: string
+    type: object
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  models.Category:
+    properties:
+      created:
+        type: string
+      deleted:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      name:
+        type: string
+      updated:
+        type: string
+    type: object
+  models.Food:
+    properties:
+      categoryNname:
+        type: string
+      created:
+        type: string
+      deleted:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      name:
+        type: string
+      subcategoryName:
+        type: string
+      updated:
+        type: string
+    type: object
   models.Login:
     properties:
       pin:
@@ -26,6 +96,227 @@ definitions:
 info:
   contact: {}
 paths:
+  /categories:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: query
+        name: id
+        type: integer
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/models.Category'
+        "400":
+          description: Bad Request
+      summary: set Delete Category
+      tags:
+      - categories
+    get:
+      consumes:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Category'
+            type: array
+        "400":
+          description: Bad Request
+      summary: set Get Categories
+      tags:
+      - categories
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Category name
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/categories.AddCategoryRequestBody'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Category'
+        "400":
+          description: Bad Request
+      summary: set Add Category
+      tags:
+      - categories
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Category name
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/categories.EditCategoryRequestBody'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Category'
+        "400":
+          description: Bad Request
+      summary: set Edit Category
+      tags:
+      - categories
+  /categories/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Category id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Category'
+        "400":
+          description: Bad Request
+      summary: set Get Category
+      tags:
+      - categories
+  /foods:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: query
+        name: id
+        type: integer
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/models.Food'
+        "400":
+          description: Bad Request
+      summary: set Delete Food
+      tags:
+      - foods
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Category Name
+        in: query
+        name: categoryName
+        type: string
+      - description: Sub Category Name
+        in: query
+        name: subCategoryName
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Food'
+            type: array
+        "400":
+          description: Bad Request
+      summary: set Get foods
+      tags:
+      - foods
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Food
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/foods.AddFoodRequestBody'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Food'
+        "400":
+          description: Bad Request
+      summary: set Add Food
+      tags:
+      - foods
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Food name
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/foods.EditFoodRequestBody'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Food'
+        "400":
+          description: Bad Request
+      summary: set Edit Food
+      tags:
+      - foods
+  /foods/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Food id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Food'
+        "400":
+          description: Bad Request
+      summary: set Get Food
+      tags:
+      - foods
+  /foods/sort/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Food id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Category Name
+        in: query
+        name: categoryName
+        type: string
+      - description: Sub Category Name
+        in: query
+        name: subCategoryName
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Food'
+        "400":
+          description: Bad Request
+      summary: set Sort Food
+      tags:
+      - foods
   /login:
     post:
       consumes:
